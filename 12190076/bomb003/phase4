@@ -1,1 +1,78 @@
 
+*******
+Phase 3
+*******
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...
+(gdb) b phase_4   // setting break point
+Breakpoint 1 at 0x400ffa
+(gdb) run sol.txt         // running start from phase_4 (sol.txt file contain answer of phase 1,2,3).
+Starting program: /home/sonam/Downloads/Assignment 1(1)/Assignment 1/bomb003/bomb sol.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there! // completed phase_3 
+2 3  // giving the random user input that we know that its required two interger digit 
+
+Breakpoint 1, 0x0000000000400ffa in phase_4 ()
+(gdb) disas
+Dump of assembler code for function phase_4:
+=> 0x0000000000400ffa <+0>:	sub    $0x18,%rsp  ///makes stack frame
+   0x0000000000400ffe <+4>:	mov    %fs:0x28,%rax
+   0x0000000000401007 <+13>:	mov    %rax,0x8(%rsp)
+   0x000000000040100c <+18>:	xor    %eax,%eax
+   0x000000000040100e <+20>:	lea    0x4(%rsp),%rcx
+   0x0000000000401013 <+25>:	mov    %rsp,%rdx
+
+   0x0000000000401016 <+28>:	mov    $0x4025af,%esi       //format of answer: %d %d
+
+   0x000000000040101b <+33>:	call   0x400bb0 <__isoc99_sscanf@plt>
+
+   0x0000000000401020 <+38>:	cmp    $0x2,%eax          // if NOT equal to 2 jump to explode bomb(user input must need two integer)
+   0x0000000000401023 <+41>:	jne    0x40102b <phase_4+49>
+   0x0000000000401025 <+43>:	cmpl   $0xe,(%rsp)    //0xe =14
+
+   0x0000000000401029 <+47>:	jbe    0x401030 <phase_4+54>    //if first input < 14, skip bomb (if not bomb explode). Hence we know that our first number required less than 14
+
+   0x000000000040102b <+49>:	call   0x40142a <explode_bomb>
+   0x0000000000401030 <+54>:	mov    $0xe,%edx   //%edx = 14
+   0x0000000000401035 <+59>:	mov    $0x0,%esi   //%esi = 0
+   0x000000000040103a <+64>:	mov    (%rsp),%edi  // rsp=3 is copy to edi
+   0x000000000040103d <+67>:	call   0x400fbc <func4>
+
+   0x0000000000401042 <+72>:	cmp    $0x2,%eax  //So from here we know that exa value  need to be 2 where  eax value is depend on the value of our first input. Hence we have to check by which number give the value of eax equal to 2 by inputing first input number ranging 0 to 14() 
+
+   0x0000000000401045 <+75>:	jne    0x40104e <phase_4+84> //bomb explode if eax value is not equal to 2
+
+   0x0000000000401047 <+77>:	cmpl   $0x2,0x4(%rsp)       // 0x4(%rsp) which store our second input value 
+   0x000000000040104c <+82>:	je     0x401053 <phase_4+89> if our second value is not equal to 2 then bomb explode. Hence our second value need to be 2.
+   
+   0x000000000040104e <+84>:	call   0x40142a <explode_bomb>
+   0x0000000000401053 <+89>:	mov    0x8(%rsp),%rax 
+   0x0000000000401058 <+94>:	xor    %fs:0x28,%rax
+   0x0000000000401061 <+103>:	je     0x401068 <phase_4+110>
+   0x0000000000401063 <+105>:	call   0x400b00 <__stack_chk_fail@plt>
+   0x0000000000401068 <+110>:	add    $0x18,%rsp
+   0x000000000040106c <+114>:	ret    
+End of assembler dump.
+(gdb) 
+
+Therefore we know our to defuse bomb 4 we need two interger first number needs to be between 0 and 14 and this problem involves recursion. We also know that the second user input number needs to be 2. So our format for the answer is "x 2". So I just plugged in numbers from 0-14 for the first input and 4 worked well(when i inputting 4 the eax value giving 2). So answer is 4 2.
+
+Solution:
+(gdb) run sol.txt
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/sonam/Downloads/Assignment 1(1)/Assignment 1/bomb003/bomb sol.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+4 2                                       // Phase_4 bomb defuse when I input 4 2
+So you got that one.  Try this one.
+
+
