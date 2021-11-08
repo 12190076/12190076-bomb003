@@ -1,1 +1,132 @@
+**********************
+         phase_5
+***********************
+
+
+(gdb) x/s 0x4025af 
+0x4025af:   "%d %d"  // we know that to defuse phase_5 we need two interger
+(gdb) 
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...
+(gdb) b phase_5               // setting break point
+Breakpoint 1 at 0x40106d
+(gdb) run sol.txt
+Starting program: /home/sonam/Downloads/Assignment 1(1)/Assignment 1/bomb003/bomb sol.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+So you got that one.  Try this one.
+4 5                                  // input two random number to find the solution 
+
+Breakpoint 1, 0x000000000040106d in phase_5 ()
+(gdb) disas
+Dump of assembler code for function phase_5:
+=> 0x000000000040106d <+0>:   sub    $0x18,%rsp
+   0x0000000000401071 <+4>:   mov    %fs:0x28,%rax
+   0x000000000040107a <+13>:  mov    %rax,0x8(%rsp)
+   0x000000000040107f <+18>:  xor    %eax,%eax
+   0x0000000000401081 <+20>:  lea    0x4(%rsp),%rcx
+   0x0000000000401086 <+25>:  mov    %rsp,%rdx
+   0x0000000000401089 <+28>:  mov    $0x4025af,%esi  // INPUT FORMATE , it accept "%d,%d"
+
+   0x000000000040108e <+33>:  call   0x400bb0 <__isoc99_sscanf@plt>
+   0x0000000000401093 <+38>:  cmp    $0x1,%eax              // Compae 1 with the value of %eax that is 2:
+   0x0000000000401096 <+41>:  jg     0x40109d <phase_5+48>  // since 2 is greater than it will skip the explode_bomb
+
+   0x0000000000401098 <+43>:  call   0x40142a <explode_bomb>
+   0x000000000040109d <+48>:  mov    (%rsp),%eax           // (%rsp) store the user first input(4) which is now copy to the %eax
+
+   0x00000000004010a0 <+51>:  and    $0xf,%eax             //AND OPERATION IS PERFORMED ,we get 
+   0x00000000004010a3 <+54>:  mov    %eax,(%rsp)
+   0x00000000004010a6 <+57>:  cmp    $0xf,%eax             // 0fx = 15 , 15 is being compared with 4. Hence we know that our first input is less than 15.
+
+   0x00000000004010a9 <+60>:  je     0x4010da <phase_5+109> // skip the explode_bomb if first input is less the 15. Hence we know that our first number required less than 15
+
+   0x00000000004010ab <+62>:  mov    $0x0,%ecx
+   0x00000000004010b0 <+67>:  mov    $0x0,%edx
+   0x00000000004010b5 <+72>:  add    $0x1,%edx
+   0x00000000004010b8 <+75>:  cltq   
+   0x00000000004010ba <+77>:  mov    0x402460(,%rax,4),%eax
+   0x00000000004010c1 <+84>:  add    %eax,%ecx
+   0x00000000004010c3 <+86>:  cmp    $0xf,%eax              //0xf=15 
+   0x00000000004010c6 <+89>:  jne    0x4010b5 <phase_5+72> // loop occur by jump at  +72 till the value of %eax equal the 15. Then it will jump to next line
+
+   0x00000000004010c8 <+91>:  movl   $0xf,(%rsp)         //// 15 is moved  at rsp, %rsp = 15   
+
+   0x00000000004010cf <+98>:  cmp    $0xf,%edx           //i5 is  compare  with rdx,
+
+   0x00000000004010d2 <+101>: jne    0x4010da <phase_5+109>   //explode bomb will be skip only if rdx value is equal to 15. where the rdx value is depend on user first input. Hence we have to check by which number give the value of eax equal to 15 by inputing first input number ranging 0 to 15 
+
+   0x00000000004010d4 <+103>: cmp    0x4(%rsp),%ecx  // 0x4(%rsp) stored the second user input which is compared with the %ecx value which ic 115.
+
+   {---
+      ------
+      -----
+   (gdb) i r
+         rax            0xf                 15
+         rbx            0x7fffffffdf78      140737488347000
+         rcx            0x73                115
+         rdx            0xf                 15
+         rsi            0x0                 0
+         rdi            0x7fffffffd810      140737488345104
+         rbp            0x0                 0x0
+         rsp            0x7fffffffde60      0x7fffffffde60
+         r8             0x1999999999999999  1844674407370955161
+         r9             0x0                 0
+         r10            0x7ffff7f55ac0      140737353439936
+         r11            0x7ffff7f563c0      140737353442240
+         r12            0x400c60            4197472
+         r13            0x0                 0
+         r14            0x0                 0
+         r15            0x0                 0
+         rip            0x4010d4            0x4010d4 <phase_5+103>
+         eflags         0x246               [ PF ZF IF ]
+         cs             0x33                51
+         ss             0x2b                43
+         ds             0x0                 0
+         es             0x0                 0
+         fs             0x0                 0
+         gs             0x0                 0
+         (gdb)
+   -------------- }
+
+
+   0x00000000004010d8 <+107>: je     0x4010df <phase_5+114>          // skip explode_bomb  if only our second value is equal to 115(%ecx). Hence we prove that our second value is 115.
+
+   0x00000000004010da <+109>: call   0x40142a <explode_bomb>
+   0x00000000004010df <+114>: mov    0x8(%rsp),%rax
+   0x00000000004010e4 <+119>: xor    %fs:0x28,%rax
+   0x00000000004010ed <+128>: je     0x4010f4 <phase_5+135>
+   0x00000000004010ef <+130>: call   0x400b00 <__stack_chk_fail@plt>
+   0x00000000004010f4 <+135>: add    $0x18,%rsp
+   0x00000000004010f8 <+139>: ret    
+--Type <RET> for more, q to quit, c to continue without paging--
+End of assembler dump.
+(gdb) 
+
+****************
+   Solution:
+****************
+
+Therefore we know that to defuse bomb 5 we need two interger first number needs to be between 0 and 15 which occur loop statement. We also know that the second user input number needs to be 115. So our format for the answer is "x 115". So I just plugged in numbers from 0-15 for the first input and 5 worked well(when i inputting 5 the edx value giving 15). So answer is 5 115.
+
+(gdb) run sol.txt
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/sonam/Downloads/Assignment 1(1)/Assignment 1/bomb003/bomb sol.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+That's number 2.  Keep going!
+Halfway there!
+So you got that one.  Try this one.
+5 115                                // Phase_5 bomb defuse when I input 5 115
+Good work!  On to the next...
+
+
+
 
